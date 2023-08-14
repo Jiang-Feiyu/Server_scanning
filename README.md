@@ -30,7 +30,9 @@ This is a note of server scanning based on **regex**. The purpose of scanning is
 <p align=center><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f0385fd5d7af4c1d8ce02551835e2730~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"  width="70%"/></p>
 
 4. **Zombie process casused by `find`**
-- I tried several methods, mainly trying to find the specific pid, collecting them into a variable and killing them respectively, but the result shows not working well. The way I solve it is quite simple, 
+- Since`find` is a recursive command, it will create loads of child processes to search into different directories. When the parent process is killed, there would be no *stop* command from the parent process so the child process will run until all files are traversed.
+- I tried several methods, mainly trying to find the specific pid, collecting them into a variable and killing them respectively, but the result shows not working well. It won't be easy to kill the specific pid since the process is dynamic.
+- Timeout function is a good command for dealing with this issue. The basic grammar is like: `timeout [OPTIONS] DURATION COMMAND [ARG]…`
 
 ## Expected results and possible errors
 
@@ -48,11 +50,12 @@ During our engagement, code running on `RHEL8` is same as the code running on `k
 3. Setup through VMware
 </br> Here is a detailed **tutorial** about how to setup:
 https://www.linuxprobe.com/vmware-install-solaris10.html 
-</br> Some critical steps and problems I encountered:
+</br> Some critical steps:
 ```
 Network Connectivity -> Yes
 DHCP for e1000g0 -> No
 IP address for e1000g0 -> turn on your cmd and type `ipconfig` and should be your IPv4 Address.
+Host Name -> turn on your cmd and type `hostname`
 Netmask for e1000g0 -> 255.255.255.0
 IPv6 -> No
 Default Route for e1000g0 -> Detect one upon reboot
@@ -63,9 +66,6 @@ File Style type -> ZFS
 Software -> Entire Distribution
 * Notice, the login name should be `root`
 ```
-## Code for reference
-- `RHL8` version
-</br>Please refer to `script_RHL8.ksh`
 
   
 ## Reference
