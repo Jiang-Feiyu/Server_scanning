@@ -34,11 +34,38 @@ This is a note of server scanning based on **regex**. The purpose of scanning is
 - I tried several methods, mainly trying to find the specific pid, collecting them into a variable and killing them respectively, but the result shows not working well. It won't be easy to kill the specific pid since the process is dynamic.
 - Timeout function is a good command for dealing with this issue. The basic grammar is like: `timeout [OPTIONS] DURATION COMMAND [ARG]…`
 
-## Expected results and possible errors
+### Errors in setting up a virtual machine
+1. **VMWare 'Taking ownership of this virtual machine failed' Error**[3]
+- launch Task Manager by pressing `CTRL+ALT+DEL` on the keyboard and end the process of vmware.exe
+- Go to the folder containing the problematic virtual machine. Next, look for any " **.lck**" or " **.lock**" files AND folders. Cut these files into a `Temp` file folder, which is newly created.
+- Start VMWare Workstation again.
+2. **Keyboard and Mouse cannot connect to VMware**
+- Disconnection of keyboard and mouse between VMware and your PC is quite common. Here are some reference links: <vmware虛擬機不能使用鍵盤該怎麼辦？>[5], <安装虚拟机后键盘失灵>[6], <輸入問題故障排除>[7]
+3. **Windows host ssh connect to virtual machine**
+
+- There is another way to use command line to control the virtual machine and login through `ssh`.
+- How to start the Vmware through command line:
+</br> I create a `.bat` file like this:
+```
+C:
+cd "\Program Files (x86)\VMware\VMware Workstation"
+vmrun -T ws start "C:\Users\<your username>\desktop\VMware-sol-10\Solaris-10-64-bit-kpmg.vmx" nogui
+```
+- First, you need to find the `ip` address of both your physical machine and virtual machine.[8]
+- `ipconfig` in your `cmd` and record your `Wireless LAN adapter Wi-Fi`-`IPv4 Address` and `Subnet Mask`.
+- Turn on your VMware and don't start any machine. Click `Edit` -> `Virtual Network Editor` -> (type - NAT) `Subnet Address`(you can also infer the subnet musk since the last digit is 0)
+- Turn on your virtual machine and download some package: `sudo apt-get install openssh-server net-tools`, after downloading, you may use `ifconfig` to check your virtual machine's ip address.
+- Modify your NAT setting, set the port number to `22` and input your virtual machine's `ip`. You may check the ssh config by `sudo vim /etc/ssh/ssh_config`, delete the `#` in front of `PasswordAuthentication yes` and `port 22`. Save the file by `esc` + `:wq`.
+- You may test ssh connection by `ssh yourVMusername@yourVMip`
 
 ## Running on different system
 During our engagement, code running on `RHEL8` is same as the code running on `kali-linux-2022.3-vmware-amd64`, so I will focus on the `Solaris`, `Unix` and `AIX` in the following page. Here is a brief history and relationship map between different linux operation system:
 <p align=center><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/569d226bd8d54e028cf2eb41ec39b3f0~tplv-k3u1fbpfcp-watermark.image?" alt="image.png" width="70%" /></p>
+
+### VMware download
+1. Download from this website: https://www.vmware.com/products/workstation-pro/workstation-pro-evaluation.html 
+2. Permanent key for VMware Pro:[4]
+</br> key: `JU090-6039P-08409-8J0QH-2YR7F `
 
 ### Solaris-10 system
 1. **What is Solaris system**
@@ -67,10 +94,17 @@ Software -> Entire Distribution
 * Notice, the login name should be `root`
 ```
 
+## Expected results and possible errors
   
 ## Reference
  [1]: https://linuxhint.com/find-kill-zombie-process-linux/ 
  [2]: https://phoenixnap.com/kb/how-to-kill-a-process-in-linux#ftoc-heading-12
+ [3]: https://www.infopackets.com/news/10475/how-fix-vmware-taking-ownership-virtual-machine-failed-error
+ [4]: https://www.isharepc.com/36181.html 
+ [5]: https://twcomputer.wsxdn.com/based/basiccomputerknowl/201510/27733.html
+ [6]: https://juejin.cn/s/%E5%AE%89%E8%A3%85%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%90%8E%E9%94%AE%E7%9B%98%E5%A4%B1%E7%81%B5
+ [7]: https://docs.vmware.com/tw/VMware-Workstation-Pro/17/com.vmware.ws.using.doc/GUID-D677B10A-3590-460A-8141-709B4F8E4685.html
+ [8]: https://www.huoban.com/news/post/3040.html
 Code for reference
 - `RHL8` version
 </br>Please refer to `script_RHL8.ksh`
