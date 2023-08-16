@@ -17,7 +17,7 @@ This is a note of server scanning based on **regex**. The purpose of scanning is
 1. **The situation we met**:
 </br>When I tried to record all the paths of files through `find`, I surprisingly found that the program is still running even when I kill the program in the terminal. The size of file is growing and CPU in a high usage, I realize there must be a zombie process.
 2. **What is Zombie process and how to prevent them?** 
-- A zombie process or defunct process is a process  that has completed execution but still has an entry in the [process table](https://en.wikipedia.org/wiki/Process_table "Process table"): it is a process in the [Terminated state](https://en.wikipedia.org/wiki/Process_state#Terminated "Process state").
+- A zombie process or defunct process is a process  that has completed execution but still has an entry in the process table: it is a process in the *Terminated state*.
 - Zombie processes are already dead processes but the parent process is unable to read its status and cannot be released from memory. So, the dead process cannot be killed.
 
 3. **How to detect and kill ps the Zombie process:**
@@ -63,7 +63,7 @@ During our engagement, code running on `RHEL8` is same as the code running on `k
 <p align=center><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/569d226bd8d54e028cf2eb41ec39b3f0~tplv-k3u1fbpfcp-watermark.image?" alt="image.png" width="70%" /></p>
 
 ### VMware download
-1. Download from this website: https://www.vmware.com/products/workstation-pro/workstation-pro-evaluation.html 
+1. Download from this website[9]
 2. Permanent key for VMware Pro:[4]
 </br> key: `JU090-6039P-08409-8J0QH-2YR7F `
 
@@ -72,11 +72,10 @@ During our engagement, code running on `RHEL8` is same as the code running on `k
 </br> Solaris is considered one of the derivatives of the UNIX operating system. Solaris is hybrid open source software.
 2. **Different versions of Solaris**
 </br> Noramlly there are two versions of Solaris DVD image, `SPARC` and `x86`. Please download it depends on your PC. You may check your device in System -> About -> System type.
-</br> Download link: https://www.oracle.com/solaris/solaris10/downloads/solaris10-get-jsp-downloads.html
+</br> Download link: [13]
 </br> You need to register a Oracle link before download the disc.
 3. Setup through VMware
-</br> Here is a detailed **tutorial** about how to setup:
-https://www.linuxprobe.com/vmware-install-solaris10.html 
+</br> Here is a detailed **tutorial** about how to setup: [14] 
 </br> Some critical steps:
 ```
 Network Connectivity -> Yes
@@ -93,6 +92,10 @@ File Style type -> ZFS
 Software -> Entire Distribution
 * Notice, the login name should be `root`
 ```
+4. How to set a **share holder** on both host and virtual machine
+- Install VM tools on your virtual machine, for more info, please click the reference link[10] if you need to download it manually.
+- Turn off your virtual machine, and enable `share folder` in `VM`-> `Settings`-> `options` -> `Share folder`, create a new folder on your physical machine and paste the path as instructed.[11]
+- Turn on the Virtual machine again and `cd /mnt/hgfs`, you will see your folder there.[12]
 
 ## Expected results and possible errors
   
@@ -105,6 +108,17 @@ Software -> Entire Distribution
  [6]: https://juejin.cn/s/%E5%AE%89%E8%A3%85%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%90%8E%E9%94%AE%E7%9B%98%E5%A4%B1%E7%81%B5
  [7]: https://docs.vmware.com/tw/VMware-Workstation-Pro/17/com.vmware.ws.using.doc/GUID-D677B10A-3590-460A-8141-709B4F8E4685.html
  [8]: https://www.huoban.com/news/post/3040.html
+ [9]: https://www.vmware.com/products/workstation-pro/workstation-pro-evaluation.html 
+ [10]: https://docs.vmware.com/en/VMware-Tools/12.2.0/com.vmware.vsphere.vmwaretools.doc/GUID-F223AEF5-AF32-4646-8177-FC1625B54366.html
+ [11]: https://zhuanlan.zhihu.com/p/43920548
+ [12]: https://blog.csdn.net/lq1759336950/article/details/104866536
+ [13]: https://www.oracle.com/solaris/solaris10/downloads/solaris10-get-jsp-downloads.html
+ [14]: https://www.linuxprobe.com/vmware-install-solaris10.html
 Code for reference
 - `RHL8` version
 </br>Please refer to `script_RHL8.ksh`
+
+正则匹配简介：https://www.softwaretestinghelp.com/unix-regular-expressions/
+正则匹配和模式匹配
+find: bad option -printf
+报错：ls: illegal option --time-style=long-ios
