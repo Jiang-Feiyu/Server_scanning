@@ -26,15 +26,10 @@ then
   mkdir -p $networkdrive$hostname
 fi
 
-# Define timeout
-timeout=10800
 
-#adding a scan started message to the log
-echo "====================Scan started at $(date +'%d-%b-%Y %H:%M:%S')====================" >> $logpath
-echo "====Path Scan started at $(date +'%d-%b-%Y %H:%M:%S')===="
 # Preventing CPU working overload
 function cpu_limit {
- CPU_USAGE=$(sar -u 1 1 | tail -n 1 | awk '{print $NF}')
+ CPU_USAGE=`sar -u 1 1 | tail -1 | awk '{print $NF}'`
  if [[ $CPU_USAGE -gt 50 ]]; then 
   echo "High CPU usage detected. Sleeping for 10s" >> "$logpath"
   echo "High CPU usage detected. Sleeping for 10s" >> "$hitpath"
@@ -65,16 +60,27 @@ function show_progress {
     todo_sub_bar=$(printf "%${todo}s" | tr " " "${bar_char_todo}")
 
     # output the bar
-    echo -ne "\rProgress : [${done_sub_bar}${todo_sub_bar}] ${percent}%"
+    printf "\r Progress : [${done_sub_bar}${todo_sub_bar}] ${percent}%\033[0K\r" #overwrite
 
     if [ $total -eq $current ]; then
-        echo -e "\nDONE"
+        #adding a scan ended message to the log
+        echo "====================Scan ended at $(date +'%d-%b-%Y %H:%M:%S')=====================" >> $logpath
+        echo "====Scan ended at $(date +'%d-%b-%Y %H:%M:%S')===="
     fi
 }
 
+# Define timeout
+timeout=10800
+
+# Collect all the file path
+echo "====================Scan started at $(date +'%d-%b-%Y %H:%M:%S')====================" >> $logpath
+echo "====Path Scan started at $(date +'%d-%b-%Y %H:%M:%S')===="
+
 # Find files and format output
 time (find "$scanpath" -type f | sed 's/"/_/g')>> "$logpath" 2>> "$errorpath"
-echo "====================Path scan ended at $(date +'%d-%b-%Y %H:%M:%S')====================="
+
+echo "====================Scan ended at $(date +'%d-%b-%Y %H:%M:%S')=====================" >> $logpath
+echo "====Path scan ended at $(date +'%d-%b-%Y %H:%M:%S')===="
 
 # Start to detect the high-risk file
 echo "====Start detecting high-risk files now===="
@@ -85,11 +91,8 @@ current_task=0
 
 while [ $current_task -lt $tasks_in_total ]
 do
-  # sleep 0.1
-  show_progress $current_task $tasks_in_total
-  echo "XX"
+  # cpu_limit # This will be turn off druing server simulation
+  show_progress $current_task $tasks_in_total 
   current_task=`expr $current_task + 1`
 done
 
-#adding a scan ended message to the log
-echo "====================Scan ended at $(date +'%d-%b-%Y %H:%M:%S')=====================" >> $logpath
